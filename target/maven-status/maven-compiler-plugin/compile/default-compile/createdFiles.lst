@@ -1,0 +1,7 @@
+services\TransactionService.class
+database\DatabaseConnection.class
+models\User.class
+services\AccountService.class
+services\AuthService.class
+models\Transaction.class
+models\Account.class

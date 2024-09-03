@@ -17,28 +17,24 @@ public class AccountService {
         public void createAccount(String accountHolderName, double initialBalance) {
             String accountNumber = generateAccountNumber();
             Account newAccount = new Account(accountNumber, accountHolderName, initialBalance);
-            accountDatabase.put(accountNumber, newAccount);
-            System.out.println("Account created successfully with Account Number: " + accountNumber);
+            newAccount.save();  // Save the account to the database
         }
 
-        // Retrieve account details
-        public Account getAccount(String accountNumber) {
-            return accountDatabase.get(accountNumber);
+    public void deposit(String accountNumber, double amount) {
+        Account account = Account.findByAccountNumber(accountNumber);  // Retrieve from database
+        if (account != null) {
+            account.deposit(amount);
+            Transaction transaction = new Transaction(
+                    Transaction.generateTransactionId(),
+                    accountNumber,
+                    amount,
+                    "Deposit"
+            );
+            transaction.save();  // Save the transaction to the database
         }
+    }
 
-        // Deposit money into an account
-        public void deposit(String accountNumber, double amount) {
-            Account account = accountDatabase.get(accountNumber);
-            if (account != null) {
-                account.deposit(amount);
-                transactionService.recordTransaction(accountNumber, amount, "Deposit");
-                System.out.println("Deposit successful. New balance: " + account.getBalance());
-            } else {
-                System.out.println("Account not found.");
-            }
-        }
-
-        // Withdraw money from an account
+    // Withdraw money from an account
         public void withdraw(String accountNumber, double amount) {
             Account account = accountDatabase.get(accountNumber);
             if (account != null) {
